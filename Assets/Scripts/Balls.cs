@@ -13,8 +13,14 @@ public class Balls : MonoBehaviour {
 
 	public List<Bouncer> bouncers;
 
+    void Awake()
+    {
+        if (bouncers == null || bouncers.Count == 0)
+            bouncers = new List<Bouncer>(FindObjectsOfType<Bouncer>());
+    }
+    
 	// Use this for initialization
-	void Start () {
+    void Start () {
 		balls.Add (ball);
 		cur_ball = 0;
 	}
@@ -36,8 +42,9 @@ public class Balls : MonoBehaviour {
 		return b;
 	}
 
-	public void move_balls(float delta_t) {
-		foreach (Ball b in balls) {
+	public void move_balls(float delta_t) 
+	{
+        foreach (Ball b in balls) {
 			BallState bs1 = b.motion;
 			BallState bs2 = b.move_ball (delta_t);
 			if (bs2 != null) {

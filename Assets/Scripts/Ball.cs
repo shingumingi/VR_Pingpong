@@ -17,49 +17,65 @@ public class Ball : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		motion = new BallState (this, 0f, transform.position, Vector3.zero, Vector3.zero);
-		float area = Mathf.PI * radius * radius;
-		cdrag = 0.5f * drag_coefficient * air_density * area / mass;
-		clift = 0.5f * lift_coefficient * air_density * area * radius / mass;
-	}
-		
-	public void set_motion(BallState bs) {
-		float time_step = bs.time - motion.time;
-	
-		transform.position = bs.position;
-		motion = bs;
+        EnsureMotionInitialized();
+        float area = Mathf.PI * radius * radius;
+        cdrag = 0.5f * drag_coefficient * air_density * area / mass;
+        clift = 0.5f * lift_coefficient * air_density * area * radius / mass;
+    }
 
-		// Update orientation of ball so markings on ball rotate.
-		float a = Mathf.Rad2Deg * time_step * bs.angular_velocity.magnitude;  // Rotation in degrees.
-		Vector3 axis = bs.angular_velocity.normalized;
-		transform.rotation = Quaternion.AngleAxis (a, axis) * transform.rotation;
-	}
+    void OnEnable()
+    {
+        EnsureMotionInitialized();
+    }
+
+    void EnsureMotionInitialized()
+    {
+        if (motion == null)
+            motion = new BallState(this, 0f, transform.position, Vector3.zero, Vector3.zero);
+    }
+
+    public void set_motion(BallState bs) 
+	{
+        float time_step = (motion != null) ? (bs.time - motion.time) : 0f;
+        transform.position = bs.position;
+        motion = bs;
+
+        float a = Mathf.Rad2Deg * time_step * bs.angular_velocity.magnitude;
+        Vector3 axis = (bs.angular_velocity.sqrMagnitude > 0f) ? bs.angular_velocity.normalized : Vector3.up;
+        transform.rotation = Quaternion.AngleAxis(a, axis) * transform.rotation;
+    }
 
 	public BallState move_ball(float delta_t) {
 
 		if (freeze)
 			return null;
 
-		if (transform.position.y < -1) {
+        EnsureMotionInitialized();
+
+        if (transform.position.y < -1) {
 			// Deactivate balls after they go below the floor.
 			gameObject.SetActive (false);
 			freeze = true;
 			return null;
 		}
-		BallState bs = ball_time_step (motion, delta_t);
-		return bs;
-	}
+
+        return ball_time_step(motion, delta_t);
+    }
 
 	public BallState ball_time_step(BallState bs, float t) {
-		Vector3 v = bs.velocity;
-		Vector3 drag = -cdrag * v.magnitude * v;
-		Vector3 lift = clift * Vector3.Cross (bs.angular_velocity, v);
-		Vector3 accel = gravity + drag + lift;
-		Vector3 p = bs.position + v * t + accel * (0.5f*t*t);
-		v += t * accel;
-		BallState bs2 = new BallState (this, bs.time + t, p, v, bs.angular_velocity);
-		return bs2;
-	}
+        if (bs == null)
+        {
+            EnsureMotionInitialized();
+            bs = motion;
+        }
+        Vector3 v = bs.velocity;
+        Vector3 drag = -cdrag * v.magnitude * v;
+        Vector3 lift = clift * Vector3.Cross(bs.angular_velocity, v);
+        Vector3 accel = gravity + drag + lift;
+        Vector3 p = bs.position + v * t + accel * (0.5f * t * t);
+        v += t * accel;
+        return new BallState(this, bs.time + t, p, v, bs.angular_velocity);
+    }
 
 	public float vertical_speed_for_range(float vhorz, float spin, float height, float range) {
 	       //
