@@ -13,6 +13,7 @@ public class Hand : MonoBehaviour {
     float vmin_ball_release = 1.8f;  // Minimum ball release speed.
     public Toss last_toss;
 
+    public Transform controllerTransform;
     public Paddle held_paddle;
     public Grip grip;
     public bool freeze_paddle = false;  // Used for instant replay.
@@ -22,8 +23,11 @@ public class Hand : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-//        move_held_ball ();
+    void Update () 
+    {
+        update_paddle_position(Time.deltaTime);
+        move_held_ball();
+        Debug.Log("dsad");
     }
 
     // Set paddle orientation in hand.
@@ -38,30 +42,53 @@ public class Hand : MonoBehaviour {
     // Update paddle position to match hand controller position.
     public void update_paddle_position(float delta_t) {
         if (held_paddle && !freeze_paddle)
-            align_paddle_to_hand ();
+        {
+            align_paddle_to_hand();
+            Debug.Log("gogo");
+        }
     }
 
-    void align_paddle_to_hand() {
+    void align_paddle_to_hand()
+    {
+        if (controllerTransform == null || held_paddle == null)
+        {
+            Debug.LogWarning("Hand: controllerTransform 또는 held_paddle 이 비어있음");
+            return;
+        }
 
-	// Debug.Log("Paddle device " + wand.device_index());
-	
-        Vector3 hp, hv, hav, ha;
-        Quaternion hr;
-        wand.predict_hand_motion (out hp, out hr, out hv, out hav, out ha);
+        // 1. XR 컨트롤러의 월드 위치/회전
+        Vector3 hp = controllerTransform.position;
+        Quaternion hr = controllerTransform.rotation;
 
-	// Debug.Log("Hand position " + hp);
-        // Remember maximum hand acceleration for reporting.
-        max_hand_accel =  Mathf.Max (max_hand_accel, ha.magnitude);
+        // 2. 기본 오프셋 (Grip 없으면 그냥 컨트롤러 위치에 붙이기)
+        Vector3 offset = Vector3.zero;
+        Quaternion rotOffset = Quaternion.identity;
 
-        // Compute paddle motion from hand motion.
-        Vector3 paddle_position, paddle_velocity, paddle_angular_velocity;
-        Quaternion paddle_rotation;
-        grip.hand_to_paddle_motion (hp, hr, hv, hav, wand.left,
-            out paddle_position, out paddle_rotation,
-            out paddle_velocity, out paddle_angular_velocity);
+        if (grip != null)
+        {
+            offset = grip.paddle_grip_position;
+            rotOffset = grip.paddle_grip_rotation;
 
-        // Set new paddle position
-        held_paddle.move(paddle_position, paddle_rotation, paddle_velocity, paddle_angular_velocity);
+            // 왼손이면 x축 반전
+            if (wand != null && wand.left)
+            {
+                offset = new Vector3(-offset.x, offset.y, offset.z);
+                rotOffset = new Quaternion(rotOffset.x, -rotOffset.y, -rotOffset.z, rotOffset.w);
+            }
+        }
+
+        // 3. 컨트롤러 포즈 + 그립 오프셋을 월드 좌표로 변환
+        Vector3 worldPos = hp + hr * offset;
+        Quaternion worldRot = hr * rotOffset;
+
+        // 4. 속도/각속도는 일단 0 으로 (나중에 필요하면 계산)
+        Vector3 vel = Vector3.zero;
+        Vector3 angVel = Vector3.zero;
+
+        // 5. 패들 이동
+        held_paddle.move(worldPos, worldRot, vel, angVel);
+
+        Debug.Log($"Hand: hp={hp} worldPos={worldPos}");
     }
 
     public bool move_held_ball() {
@@ -193,7 +220,7 @@ public class Grips {
         // These shakehand and penhold grip orientations were hand adjusted in the PingPang app
 	// then saved to the grips.json file and copied into the code here.
 
-        string grips_json = "{'grips':[{'grip_name':'shake hands','hand_controller':'oculus rift','paddle_grip_position':{'x':0.007991436868906021,'y':0.04362906515598297,'z':0.03974873572587967},'paddle_grip_rotation':{'x':0.29819056391716006,'y':0.49500420689582827,'z':0.21315982937812806,'w':0.7877920269966126}},{'grip_name':'pen hold','hand_controller':'oculus rift','paddle_grip_position':{'x':-0.007771163247525692,'y':0.011335986666381359,'z':0.06225813180208206},'paddle_grip_rotation':{'x':-0.05083705484867096,'y':0.8304163217544556,'z':0.5415476560592651,'w':0.1206250786781311}},{'grip_name':'custom','hand_controller':'oculus rift','paddle_grip_position':{'x':0.0,'y':0.0,'z':0.0},'paddle_grip_rotation':{'x':0.0,'y':0.0,'z':0.0,'w':1.0}}]}".Replace("'", "\"");
+        string grips_json = "{'grips':[{'grip_name':'shake hands','hand_controller':'oculus rift','paddle_grip_position':{'x':0.0079914,'y':0.043629,'z':0.0397487},'paddle_grip_rotation':{'x':0.29819056391716006,'y':0.49500420689582827,'z':0.21315982937812806,'w':0.7877920269966126}},{'grip_name':'pen hold','hand_controller':'oculus rift','paddle_grip_position':{'x':-0.0077711,'y':0.011336,'z':0.0622581},'paddle_grip_rotation':{'x':-0.05083705484867096,'y':0.8304163217544556,'z':0.5415476560592651,'w':0.1206250786781311}},{'grip_name':'custom','hand_controller':'oculus rift','paddle_grip_position':{'x':0.0,'y':0.0,'z':0.0},'paddle_grip_rotation':{'x':0.0,'y':0.0,'z':0.0,'w':1.0}}]}".Replace("'", "\"");
 
         JsonUtility.FromJsonOverwrite(grips_json, this);
     }
