@@ -1683,7 +1683,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   right: 1
   left: 0
-  tracking_space: {fileID: 0}
+  tracking_space: {fileID: 1494614829}
   latency: 0
   warning: {fileID: 575120066}
 --- !u!4 &127046157
@@ -1695,7 +1695,7 @@ Transform:
   m_GameObject: {fileID: 127046155}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.786, z: -1.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16062,9 +16062,9 @@ MonoBehaviour:
   - {fileID: 186954007}
   playing_game: 0
   settings: {fileID: 1005869017}
-  vr_camera: {fileID: 0}
+  vr_camera: {fileID: 1520020661}
   floor: {fileID: 366332733}
-  passthrough_camera: {fileID: 0}
+  passthrough_camera: {fileID: 1731298971}
   path_tracer: {fileID: 1070013921}
 --- !u!114 &1005869014
 MonoBehaviour:
@@ -19207,7 +19207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   right: 1
   left: 0
-  tracking_space: {fileID: 0}
+  tracking_space: {fileID: 1494614829}
   latency: 0
   warning: {fileID: 575120066}
 --- !u!4 &1242590415
@@ -19219,7 +19219,7 @@ Transform:
   m_GameObject: {fileID: 1242590413}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.786, z: -1.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22952,7 +22952,7 @@ Transform:
   m_GameObject: {fileID: 1494614828}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.786, z: -1.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -23500,11 +23500,11 @@ MonoBehaviour:
   billboard: {fileID: 1708756070}
   marked_surfaces: []
   playing_game: 0
-  settings: {fileID: 0}
-  vr_camera: {fileID: 0}
-  floor: {fileID: 0}
-  passthrough_camera: {fileID: 0}
-  path_tracer: {fileID: 0}
+  settings: {fileID: 1005869017}
+  vr_camera: {fileID: 1520020661}
+  floor: {fileID: 366332733}
+  passthrough_camera: {fileID: 1731298971}
+  path_tracer: {fileID: 1070013921}
 --- !u!1 &1522956426
 GameObject:
   m_ObjectHideFlags: 0
@@ -31399,7 +31399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   right: 0
   left: 1
-  tracking_space: {fileID: 0}
+  tracking_space: {fileID: 1494614829}
   latency: 0
   warning: {fileID: 575120066}
 --- !u!4 &2010892465
@@ -31411,7 +31411,7 @@ Transform:
   m_GameObject: {fileID: 2010892463}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.786, z: -1.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
