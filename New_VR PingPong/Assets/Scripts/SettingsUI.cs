@@ -340,11 +340,11 @@ public class SettingsUI : MonoBehaviour
 
     void serve_setting_changed(bool ignore)
     {
-	if (!auto_serve.isOn)
-	    play.robot.auto_serve = false;
+	    if (!auto_serve.isOn)
+	        play.robot.auto_serve = false;
 	
-	int repeat = (repeat_serve.isOn ? 5 : 1);
-	play.robot.set_serve_repeat(repeat);
+	    int repeat = (repeat_serve.isOn ? 5 : 1);
+	    play.robot.set_serve_repeat(repeat);
 	
         filter_serves();
     }

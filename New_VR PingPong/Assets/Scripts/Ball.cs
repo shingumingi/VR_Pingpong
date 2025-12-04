@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ball : MonoBehaviour {
+public class Ball : MonoBehaviour 
+{
+    public static float speedScale = 1f;
 
-	public BallState motion;
+    public BallState motion;
 	public Vector3 gravity = new Vector3(0f, -9.8f, 0f);
 	public float radius = 0.02f;
 	public float mass = 0.0027f;  // 2.7 grams
@@ -68,13 +70,15 @@ public class Ball : MonoBehaviour {
             EnsureMotionInitialized();
             bs = motion;
         }
+        float scaledT = t * speedScale;
+
         Vector3 v = bs.velocity;
         Vector3 drag = -cdrag * v.magnitude * v;
         Vector3 lift = clift * Vector3.Cross(bs.angular_velocity, v);
         Vector3 accel = gravity + drag + lift;
-        Vector3 p = bs.position + v * t + accel * (0.5f * t * t);
-        v += t * accel;
-        return new BallState(this, bs.time + t, p, v, bs.angular_velocity);
+        Vector3 p = bs.position + v * scaledT + accel * (0.5f * scaledT * scaledT);
+        v += scaledT * accel;
+        return new BallState(this, bs.time + scaledT, p, v, bs.angular_velocity);
     }
 
 	public float vertical_speed_for_range(float vhorz, float spin, float height, float range) {

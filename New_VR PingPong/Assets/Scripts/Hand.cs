@@ -27,7 +27,6 @@ public class Hand : MonoBehaviour {
     {
         update_paddle_position(Time.deltaTime);
         move_held_ball();
-        Debug.Log("dsad");
     }
 
     // Set paddle orientation in hand.
@@ -44,7 +43,6 @@ public class Hand : MonoBehaviour {
         if (held_paddle && !freeze_paddle)
         {
             align_paddle_to_hand();
-            Debug.Log("gogo");
         }
     }
 
@@ -52,7 +50,6 @@ public class Hand : MonoBehaviour {
     {
         if (controllerTransform == null || held_paddle == null)
         {
-            Debug.LogWarning("Hand: controllerTransform 또는 held_paddle 이 비어있음");
             return;
         }
 
@@ -87,8 +84,6 @@ public class Hand : MonoBehaviour {
 
         // 5. 패들 이동
         held_paddle.move(worldPos, worldRot, vel, angVel);
-
-        Debug.Log($"Hand: hp={hp} worldPos={worldPos}");
     }
 
     public bool move_held_ball() {

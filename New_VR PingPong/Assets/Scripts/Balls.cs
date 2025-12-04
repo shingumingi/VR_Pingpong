@@ -1,93 +1,135 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Balls : MonoBehaviour {
+public class Balls : MonoBehaviour
+{
+    [Header("레퍼런스")]
+    public Play play;
+    public Ball ball;
 
-	public Play play; 
-	public Ball ball;   // Original ball for duplicating
-	public Material white_ball, orange_striped_ball;
-	List<Ball> balls = new List<Ball>();
-	int cur_ball;
-	public int ball_count = 3;
+    [Header("공 풀 설정")]
+    public int ball_count = 10;
+    public Material white_ball;
+    public Material orange_striped_ball;
 
-	public List<Bouncer> bouncers;
+    [Header("충돌 표면들")]
+    public List<Bouncer> bouncers;
+
+    private List<Ball> balls = new List<Ball>();
+    private int cur_ball = 0;
 
     void Awake()
     {
+        if (balls == null)
+            balls = new List<Ball>();
+
+        if (balls.Count == 0 && ball != null)
+        {
+            balls.Add(ball);
+        }
+
         if (bouncers == null || bouncers.Count == 0)
-            bouncers = new List<Bouncer>(FindObjectsOfType<Bouncer>());
+        {
+            Bouncer[] found = FindObjectsOfType<Bouncer>();
+            bouncers = new List<Bouncer>(found);
+        }
     }
-    
-	// Use this for initialization
-    void Start () {
-		balls.Add (ball);
-		cur_ball = 0;
-	}
 
-	public Ball new_ball () {
-		if (balls.Count < ball_count) {
-			GameObject bo = Object.Instantiate (ball.gameObject, transform);
-			Ball bc = bo.GetComponent<Ball> ();
-			balls.Add (bc);
-			cur_ball = balls.Count - 1;
-		} else {
-			cur_ball = (cur_ball + 1) % balls.Count;
-		}
-		Ball b = balls [cur_ball];
-		if (play.ball_held (b))
-			return new_ball ();
-		b.gameObject.SetActive (true);
-		b.freeze = false;
-		return b;
-	}
+    public Ball new_ball()
+    {
+        if (balls.Count < ball_count)
+        {
+            Ball nb = Instantiate(ball, transform);
+            nb.gameObject.SetActive(true);
+            nb.freeze = false;
+            balls.Add(nb);
+            cur_ball = balls.Count - 1;
+            return nb;
+        }
 
-	public void move_balls(float delta_t) 
-	{
-        foreach (Ball b in balls) {
-			BallState bs1 = b.motion;
-			BallState bs2 = b.move_ball (delta_t);
-			if (bs2 != null) {
-				BallState bsf = compute_rebounds (bs1, bs2, b);
-				b.set_motion (bsf);
-			}
-		}
-	}
+        for (int i = 0; i < balls.Count; ++i)
+        {
+            cur_ball = (cur_ball + 1) % balls.Count;
+            Ball nb = balls[cur_ball];
 
-	BallState compute_rebounds(BallState bs1, BallState bs2, Ball b) {
-		// Adjust ball position and velocity for bouncing off paddle, table, floor, net.
-		int max_rebounds = 2;
-		for (int r = 0; r < max_rebounds; ++r) {
-			Rebound first_rb = null;
-			foreach (Bouncer bn in bouncers) {
-				Rebound rb = bn.check_for_bounce (bs1, bs2, b.radius, b.inertia_coef);
-				if (rb != null && first_rb != null) {
-					Debug.Log ("Hit " + rb.bouncer.gameObject.name + " time " + rb.contact.time.ToString("F7") +
-						" and " + first_rb.bouncer.gameObject.name + " time " + first_rb.contact.time.ToString("F7"));
-				}
+            if (play == null || !play.ball_held(nb))
+            {
+                nb.gameObject.SetActive(true);
+                nb.freeze = false;
+                return nb;
+            }
+        }
 
-				if (rb != null && (first_rb == null || rb.contact.time < first_rb.contact.time))
-					first_rb = rb;
-			}
-			if (first_rb == null)
-				break;
-			first_rb.set_ball (b);
-			play.ball_bounced (b, first_rb.bouncer);
-			bs1 = first_rb.contact;
-			bs2 = first_rb.final;
-		}
-		return bs2;
-	}
+        return null;
+    }
 
-	public void set_ball_coloring(string name)
-	{
-		Material m = white_ball;
-		if (name == "orange striped")
-			m = orange_striped_ball;
-		foreach (Ball b in balls) {
-			MeshRenderer r = b.GetComponent<MeshRenderer>();
-			r.material = m;
-		}
-	}
+    public void move_balls(float delta_t)
+    {
+        if (balls == null || balls.Count == 0)
+            return;
+
+        foreach (Ball b in balls)
+        {
+            if (b == null) continue;
+
+            BallState bs1 = b.motion;
+            BallState bs2 = b.move_ball(delta_t);
+            if (bs2 != null)
+            {
+                BallState bsf = compute_rebounds(bs1, bs2, b);
+                b.set_motion(bsf);
+            }
+        }
+    }
+
+    public BallState compute_rebounds(BallState bs1, BallState bs2, Ball b)
+    {
+        if (bouncers == null || bouncers.Count == 0)
+            return bs2;
+
+        for (int r = 0; r < 2; ++r)
+        {
+            Rebound first_rb = null;
+
+            foreach (Bouncer bn in bouncers)
+            {
+                if (bn == null) continue;
+
+                Rebound rb = bn.check_for_bounce(bs1, bs2, b.radius, b.inertia_coef);
+                if (rb != null)
+                {
+                    if (first_rb == null || rb.contact.time < first_rb.contact.time)
+                        first_rb = rb;
+                }
+            }
+
+            if (first_rb == null)
+                break;
+
+            first_rb.set_ball(b);
+
+            if (play != null)
+                play.ball_bounced(b, first_rb.bouncer);
+
+            bs1 = first_rb.contact;
+            bs2 = first_rb.final;
+        }
+
+        return bs2;
+    }
+
+    public void set_ball_coloring(string name)
+    {
+        Material m = (name == "orange striped") ? orange_striped_ball : white_ball;
+
+        if (balls == null) return;
+
+        foreach (Ball b in balls)
+        {
+            if (b == null) continue;
+            MeshRenderer mr = b.GetComponent<MeshRenderer>();
+            if (mr != null)
+                mr.material = m;
+        }
+    }
 }
-
