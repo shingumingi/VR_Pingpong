@@ -33,23 +33,35 @@ public class PaddleMotion {
 		}
 	}
 
-	public virtual bool move(float time, Paddle paddle) {
-		if (time >= start_time && time <= end_time) {	
-			float f = (time - start_time) / (end_time - start_time);
-			f = Mathf.Min(f, 1);
-			// TODO: Interpolate elbow position and rotation about elbow.
-			float pi2 = 2*Mathf.PI;
-			float mf = f - Mathf.Sin(f*pi2) / pi2;  // angle factor
-			Vector3 p = Vector3.Lerp (start_position, end_position, mf);
-			Quaternion rp = Quaternion.Slerp (start_rotation, end_rotation, mf);
-			float vf = 1.0f - Mathf.Cos(f*pi2);
-			paddle.move(p, rp, vf*ave_velocity, vf*ave_angular_velocity);
-		}
-		bool done = (time >= end_time);
-		return done;
-	}
+    public virtual bool move(float time, Paddle paddle)
+    {
+        float duration = end_time - start_time;
+        float scaledDuration = duration * Robot.i.strokeSpeedScale;
 
-	public float acceleration() {
+        // 1. 시간 진행 비율 계산
+        float elapsed = time - start_time;
+
+        // 2. Motion 재생 구간 확인
+        if (elapsed >= 0 && elapsed <= scaledDuration)
+        {
+            float f = elapsed / scaledDuration;
+            f = Mathf.Clamp01(f);
+
+            float pi2 = 2 * Mathf.PI;
+            float mf = f - Mathf.Sin(f * pi2) / pi2;
+            Vector3 p = Vector3.Lerp(start_position, end_position, mf);
+            Quaternion rp = Quaternion.Slerp(start_rotation, end_rotation, mf);
+
+            float vf = 1f - Mathf.Cos(f * pi2);
+            paddle.move(p, rp, vf * ave_velocity, vf * ave_angular_velocity);
+        }
+
+        // 3. Done 조건도 scaledDuration 기준으로
+        bool done = (elapsed >= scaledDuration);
+        return done;
+    }
+
+    public float acceleration() {
 		// Peak acceleration for linear distance and time interval
 		// with sine acceleration and intial and final speed equal to zero.
 		float d = (end_position - start_position).magnitude;

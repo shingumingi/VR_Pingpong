@@ -5792,9 +5792,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   play: {fileID: 1005869013}
   ball: {fileID: 1402193999}
+  ball_count: 3
   white_ball: {fileID: 2100000, guid: 821c9fbf723d3ef4a8e6ecf2d05ad075, type: 2}
   orange_striped_ball: {fileID: 2100000, guid: 5fd9da09a2d76714d94c91fa7352d288, type: 2}
-  ball_count: 3
   bouncers:
   - {fileID: 1761045927}
   - {fileID: 757649407}
@@ -12882,7 +12882,7 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     velocity: {x: 0, y: 0, z: 0}
     hit_height: 0
-  controllerTransform: {fileID: 0}
+  controllerTransform: {fileID: 1513559126}
   held_paddle: {fileID: 1446309965}
   grip:
     grip_name: 
@@ -14985,6 +14985,7 @@ MonoBehaviour:
   playing_game: 0
   settings: {fileID: 1005869017}
   vr_camera: {fileID: 1520020661}
+  useRobot: 1
   floor: {fileID: 366332733}
   passthrough_camera: {fileID: 1731298971}
   path_tracer: {fileID: 1070013921}
@@ -15677,6 +15678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7747a3d1a96c2440b534dbd5465f24d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  robot: {fileID: 1628394954}
 --- !u!114 &1053485785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21904,6 +21906,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510651120}
   m_CullTransparentMesh: 0
+--- !u!4 &1513559126 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 202364688, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 9014170783777442263}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1515718226
 GameObject:
   m_ObjectHideFlags: 0
@@ -22241,6 +22248,7 @@ MonoBehaviour:
   playing_game: 0
   settings: {fileID: 1005869017}
   vr_camera: {fileID: 940240063}
+  useRobot: 1
   floor: {fileID: 366332733}
   passthrough_camera: {fileID: 1731298971}
   path_tracer: {fileID: 1070013921}

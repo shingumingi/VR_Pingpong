@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Robot : MonoBehaviour {
+    public static Robot i;
+
     public Paddle paddle;              // Robot's paddle
     public Paddle player_paddle;
     public Play play;
@@ -15,11 +17,12 @@ public class Robot : MonoBehaviour {
     int serve_repeat_count = 1;
     int repeated_serve = 0;
     public bool auto_serve = false;
+    public float strokeSpeedScale = 1f;
 
     public float swing_duration = 0.3f;       // seconds
     public float forehand_coverage = 0.75f;   // Fraction of table covered with forehand
     float backswing_pause_time = 0.0f;  // Time from end of backswing to start of stroke.
-    float recovery_time = 0.5f;            // Time from end of swing to reaching recovery paddle position.
+    public float recovery_time = 0.5f;            // Time from end of swing to reaching recovery paddle position.
     Vector3 recovery_position = new Vector3 (0f, .85f, 2.5f);
     float max_grazing_slope = 1f;
 
@@ -58,6 +61,11 @@ public class Robot : MonoBehaviour {
     
     float time_now = 0;
     List<PaddleMotion> motions = new List<PaddleMotion>();
+
+    private void Awake()
+    {
+        i = this;
+    }
 
     public Stroke return_ball(BallTrack ball_track) {
         return_count += 1;
@@ -280,8 +288,8 @@ public class Robot : MonoBehaviour {
 			 bool backhand) {
 
 
-	Vector3 pv = paddle_velocity;
-	Vector3 pn = paddle_normal;
+        Vector3 pv = paddle_velocity * (1f / strokeSpeedScale);
+        Vector3 pn = paddle_normal;
         BallState bs = incoming_ball;
         Ball b = incoming_ball.ball;
 
@@ -289,8 +297,8 @@ public class Robot : MonoBehaviour {
         Vector3 paddle_pos = bs.position - pn * (b.radius + 0.5f * paddle.thickness);
 
         // Shorten swing if needed to avoid hitting table.
-        float pre_swing_duration = 0.5f*swing_duration;
-        float post_swing_duration = 0.5f*swing_duration;
+        float pre_swing_duration = 0.5f * swing_duration * strokeSpeedScale;
+        float post_swing_duration = 0.5f * swing_duration * strokeSpeedScale;
         float d;
         float ave_speed = 0.5f * pv.magnitude;
         if (table_strike_distance(paddle_pos, -pv, pn, out d)
@@ -492,10 +500,20 @@ public class Robot : MonoBehaviour {
         if (motions.Count == 0)
             return;
 
-        PaddleMotion m = motions [0];
-        bool done = m.move (time_now, paddle);
+        PaddleMotion m = motions[0];
+        bool done = m.move(time_now, paddle);
+
         if (done)
-            motions.Remove (m);
+        {
+            motions.RemoveAt(0);
+
+            if (motions.Count > 0)
+            {
+                motions[0].start_time = time_now;   // 새 motion 시작 지점
+            }
+
+            return; // 다음 motion을 같은 프레임에 처리하지 않도록
+        }
     }
 
     public void set_stroke(Stroke s, float time_now) {
