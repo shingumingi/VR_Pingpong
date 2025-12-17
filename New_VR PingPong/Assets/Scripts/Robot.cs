@@ -17,7 +17,6 @@ public class Robot : MonoBehaviour {
     int serve_repeat_count = 1;
     int repeated_serve = 0;
     public bool auto_serve = false;
-    public float strokeSpeedScale = 1f;
 
     public float swing_duration = 0.3f;       // seconds
     public float forehand_coverage = 0.75f;   // Fraction of table covered with forehand
@@ -39,19 +38,9 @@ public class Robot : MonoBehaviour {
     public int pattern = 0;
 
     [System.NonSerialized]
-    public string [] speeds = { "Slow", "Medium", "Fast" };
-    [System.NonSerialized]
-    public int speed = 1;
-
-    [System.NonSerialized]
     public string[] spins = { "Top spin", "No spin", "Back spin", "1 back spin, then top spin", "Varied", "Varied back spin", "Random top or back spin" };
     [System.NonSerialized]
     public int spin = 0;
-
-    [System.NonSerialized]
-    public string[] movement_speeds = { "Slow", "Medium", "Fast", "Unlimited" };
-    [System.NonSerialized]
-    public int movement_speed = 1;
 
     public bool drop = true;    // Allow robot drop shots.
     public bool smash = true;
@@ -282,23 +271,21 @@ public class Robot : MonoBehaviour {
         // Decide which side of paddle to use.
         backhand = (bs.position.x > (forehand_coverage - 0.5f)*table.width);
     }
-    
+
     Stroke paddle_stroke(BallState incoming_ball,
-			 Vector3 paddle_velocity, Vector3 paddle_normal,
-			 bool backhand) {
-
-
-        Vector3 pv = paddle_velocity * (1f / strokeSpeedScale);
+                      Vector3 paddle_velocity, Vector3 paddle_normal,
+                      bool backhand)
+    {
+        Vector3 pv = paddle_velocity;
         Vector3 pn = paddle_normal;
         BallState bs = incoming_ball;
         Ball b = incoming_ball.ball;
 
-        // Get center of paddle blade by offset from ball position.
         Vector3 paddle_pos = bs.position - pn * (b.radius + 0.5f * paddle.thickness);
 
-        // Shorten swing if needed to avoid hitting table.
-        float pre_swing_duration = 0.5f * swing_duration * strokeSpeedScale;
-        float post_swing_duration = 0.5f * swing_duration * strokeSpeedScale;
+        float pre_swing_duration = 0.5f * swing_duration;
+        float post_swing_duration = 0.5f * swing_duration;
+
         float d;
         float ave_speed = 0.5f * pv.magnitude;
         if (table_strike_distance(paddle_pos, -pv, pn, out d)
@@ -308,19 +295,9 @@ public class Robot : MonoBehaviour {
             && ave_speed * post_swing_duration > d)
             post_swing_duration = d / ave_speed;
 
-        /*
-	// Peak accel for sinusoidal profile.
-        float a = (Mathf.PI / 2) * (pv.magnitude / pre_swing_duration);
-        Debug.Log("Paddle speed " + pv.magnitude + " height " + (bs.position.y - table.height)
-	          + " time " + pre_swing_duration + " accel " + a
-		  + " spin " + outgoing_ball_angular_velocity.magnitude * b.radius
-		  + " ball speed " + outgoing_ball_velocity.magnitude);
-        */
-
-        // Create paddle stroke to produce hit.
-        Stroke s = new Stroke (bs.time, paddle_pos, pn, pv,
-			       pre_swing_duration, post_swing_duration,
-			       backhand);
+        Stroke s = new Stroke(bs.time, paddle_pos, pn, pv,
+                              pre_swing_duration, post_swing_duration,
+                              backhand);
         return s;
     }
 
@@ -409,30 +386,26 @@ public class Robot : MonoBehaviour {
         return table_target;
     }
 
-    float top_spin(int num_hit) {
-        // Spin
+    float top_spin(int num_hit)
+    {
+        float spin_mag = 5f;
+
         float top_spin = 0f;
-        float spin_mag = 0f;
-        if (speeds [speed] == "Slow")
-            spin_mag = 4f;
-        else if (speeds [speed] == "Medium")
-            spin_mag = 5f;
-        else if (speeds [speed] == "Fast")
-            spin_mag = 7f;
-        if (spins [spin] == "Top spin")
+        if (spins[spin] == "Top spin")
             top_spin = spin_mag;
-        else if (spins [spin] == "No spin")
+        else if (spins[spin] == "No spin")
             top_spin = 0;
-        else if (spins [spin] == "Back spin")
+        else if (spins[spin] == "Back spin")
             top_spin = -spin_mag;
-        else if (spins [spin] == "1 back spin, then top spin")
+        else if (spins[spin] == "1 back spin, then top spin")
             top_spin = (num_hit == 1 ? -spin_mag : spin_mag);
-        else if (spins [spin] == "Varied")
-            top_spin = Random.Range (-spin_mag, spin_mag);
-        else if (spins [spin] == "Varied back spin")
-            top_spin = Random.Range (-spin_mag, 0f);
-        else if (spins [spin] == "Random top or back spin")
-            top_spin = (Random.Range (0f, 1f) > 0.5f ? spin_mag : -spin_mag);
+        else if (spins[spin] == "Varied")
+            top_spin = Random.Range(-spin_mag, spin_mag);
+        else if (spins[spin] == "Varied back spin")
+            top_spin = Random.Range(-spin_mag, 0f);
+        else if (spins[spin] == "Random top or back spin")
+            top_spin = (Random.Range(0f, 1f) > 0.5f ? spin_mag : -spin_mag);
+
         return top_spin;
     }
 
@@ -445,14 +418,7 @@ public class Robot : MonoBehaviour {
     }
 
     float speed_level() {
-        float s = 0f;
-        if (speeds [speed] == "Slow")
-            s = 0f;
-        else if (speeds [speed] == "Medium")
-            s = 0.5f;
-        else if (speeds [speed] == "Fast")
-            s = 1.0f;
-        return s;
+        return 0.5f;
     }
 
     Stroke block_return(BallState bs, Ball b) {
@@ -615,24 +581,6 @@ public class Robot : MonoBehaviour {
         return recovery;
     }
 
-    public void set_movement_speed() {
-        string s = movement_speeds[movement_speed];
-        if (s == "Slow") {
-            limit_acceleration = true;
-            max_backswing_acceleration = 20f;
-            max_stroke_acceleration = 50f;
-        } else if (s == "Medium") {    
-            limit_acceleration = true;
-            max_backswing_acceleration = 40f;
-            max_stroke_acceleration = 100f;
-        } else if (s == "Fast") {
-            limit_acceleration = true;
-            max_backswing_acceleration = 60f;
-            max_stroke_acceleration = 150f;
-        } else if (s == "Unlimited") {
-            limit_acceleration = false;
-        }
-    }
 
     public void serve() {
         new_rally();

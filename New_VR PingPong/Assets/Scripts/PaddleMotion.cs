@@ -36,7 +36,7 @@ public class PaddleMotion {
     public virtual bool move(float time, Paddle paddle)
     {
         float duration = end_time - start_time;
-        float scaledDuration = duration * Robot.i.strokeSpeedScale;
+        float scaledDuration = duration;
 
         // 1. 시간 진행 비율 계산
         float elapsed = time - start_time;

@@ -51,8 +51,6 @@ public class SettingsUI : MonoBehaviour
     public Toggle spin_top, spin_back, spin_none, spin_back1top, spin_varied, spin_varied_back, spin_topback;
     public Toggle place_forehand, place_backhand, place_random_forehand, place_random, place_diagonal, place_down_line, place_elbow, place_no_return;
     public Toggle loop, smash, drop, chop, block;
-    public Toggle move_slow, move_medium, move_fast, move_unlimited;
-    public Toggle rally_slow, rally_medium, rally_fast;
 
     // Visual Cues settings
     public Toggle hit_arrows;
@@ -77,8 +75,6 @@ public class SettingsUI : MonoBehaviour
         bind_arrow_buttons();
         bind_marker_buttons();
 	bind_track_buttons();
-        bind_move_speed_buttons();        
-        bind_rally_speed_buttons();
         bind_rally_spin_buttons();
         bind_rally_pattern_buttons();
         bind_serve_buttons();
@@ -218,19 +214,6 @@ public class SettingsUI : MonoBehaviour
 	play.robot.new_serve();
     }
     
-    void bind_move_speed_buttons()
-    {
-        add_move_speed(move_slow, "Slow");
-        add_move_speed(move_medium,"Medium");
-        add_move_speed(move_fast, "Fast");
-        add_move_speed(move_unlimited, "Unlimited");
-    }
-
-    void add_move_speed(Toggle t, string name)
-    {
-        t.onValueChanged.AddListener(delegate {if (t.isOn) set_robot_speed(name);});
-    }
-    
     void bind_rally_pattern_buttons()
     {
         add_rally_pattern(place_forehand, "Forehand");
@@ -255,18 +238,6 @@ public class SettingsUI : MonoBehaviour
         drop.onValueChanged.AddListener(delegate {play.robot.drop = drop.isOn;});
 	chop.onValueChanged.AddListener(delegate {play.robot.chop = chop.isOn;});
 	block.onValueChanged.AddListener(delegate {play.robot.block = block.isOn;});
-    }
-
-    void bind_rally_speed_buttons()
-    {
-        add_rally_speed(rally_slow, "Slow");
-        add_rally_speed(rally_medium, "Medium");
-        add_rally_speed(rally_fast, "Fast");
-    }
-
-    void add_rally_speed(Toggle t, string name)
-    {
-        t.onValueChanged.AddListener(delegate {if (t.isOn) set_rally_speed(name);});
     }
 
     void bind_rally_spin_buttons()
@@ -311,19 +282,6 @@ public class SettingsUI : MonoBehaviour
 //		  system.GetTrackedDeviceIndexForControllerRole(ETrackedControllerRole.RightFoot)
 		  );
 	*/
-    }
-
-    void set_robot_speed(string speed)
-    {
-        Robot r = play.robot;
-        r.movement_speed = Array.IndexOf(r.movement_speeds, speed);
-        r.set_movement_speed ();
-    }
-
-    void set_rally_speed(string speed)
-    {
-        Robot r = play.robot;
-        r.speed = Array.IndexOf(r.speeds, speed);
     }
 
     void set_rally_spin(string spin)
