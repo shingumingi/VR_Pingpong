@@ -19,6 +19,10 @@ public class Hand : MonoBehaviour {
     public bool freeze_paddle = false;  // Used for instant replay.
     float max_hand_accel = 0f;  // max acceleration, for debugging
 
+    Vector3 _lastWorldPos;
+    Quaternion _lastWorldRot;
+    bool _hasLastPose = false;
+
     void Start () {
     }
 
@@ -50,7 +54,7 @@ public class Hand : MonoBehaviour {
     {
         if (controllerTransform == null || held_paddle == null)
         {
-            return;
+            return; 
         }
 
         // 1. XR 컨트롤러의 월드 위치/회전
@@ -78,11 +82,25 @@ public class Hand : MonoBehaviour {
         Vector3 worldPos = hp + hr * offset;
         Quaternion worldRot = hr * rotOffset;
 
-        // 4. 속도/각속도는 일단 0 으로 (나중에 필요하면 계산)
+        float dt = Time.unscaledDeltaTime; // 손 트래킹은 “현실 시간” 기준이 자연스러움
+
         Vector3 vel = Vector3.zero;
         Vector3 angVel = Vector3.zero;
 
-        // 5. 패들 이동
+        if (_hasLastPose && dt > 0f)
+        {
+            vel = (worldPos - _lastWorldPos) / dt;
+
+            Quaternion dq = worldRot * Quaternion.Inverse(_lastWorldRot);
+            dq.ToAngleAxis(out float angleDeg, out Vector3 axis);
+            if (angleDeg > 180f) angleDeg -= 360f;
+            float angleRad = angleDeg * Mathf.Deg2Rad;
+            angVel = axis.normalized * (angleRad / dt);
+        }
+        _hasLastPose = true;
+        _lastWorldPos = worldPos;
+        _lastWorldRot = worldRot;
+
         held_paddle.move(worldPos, worldRot, vel, angVel);
     }
 

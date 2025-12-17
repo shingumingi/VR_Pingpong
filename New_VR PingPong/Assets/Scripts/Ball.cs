@@ -64,11 +64,7 @@ public class Ball : MonoBehaviour
 
     public BallState ball_time_step(BallState bs, float t)
     {
-        if (bs == null)
-        {
-            EnsureMotionInitialized();
-            bs = motion;
-        }
+        if (bs == null) { EnsureMotionInitialized(); bs = motion; }
 
         Vector3 v = bs.velocity;
         Vector3 drag = -cdrag * v.magnitude * v;
