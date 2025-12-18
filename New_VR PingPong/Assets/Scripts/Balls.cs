@@ -18,6 +18,9 @@ public class Balls : MonoBehaviour
     private List<Ball> balls = new List<Ball>();
     private int cur_ball = 0;
 
+    public float maxSubstep = 1f / 180f;
+    public int maxSubsteps = 8;
+
     void Awake()
     {
         if (balls == null)
@@ -65,19 +68,25 @@ public class Balls : MonoBehaviour
 
     public void move_balls(float delta_t)
     {
-        if (balls == null || balls.Count == 0)
-            return;
+        if (delta_t <= 0f) return;
 
-        foreach (Ball b in balls)
+        int steps = Mathf.CeilToInt(delta_t / maxSubstep);
+        steps = Mathf.Clamp(steps, 1, maxSubsteps);
+        float h = delta_t / steps;
+
+        for (int s = 0; s < steps; s++)
         {
-            if (b == null) continue;
-
-            BallState bs1 = b.motion;
-            BallState bs2 = b.move_ball(delta_t);
-            if (bs2 != null)
+            foreach (Ball b in balls)
             {
-                BallState bsf = compute_rebounds(bs1, bs2, b);
-                b.set_motion(bsf);
+                if (b == null || !b.gameObject.activeInHierarchy) continue;
+
+                BallState bs1 = b.motion;
+                BallState bs2 = b.move_ball(h);
+
+                if (bs2 == null) continue;
+
+                bs2 = compute_rebounds(bs1, bs2, b);
+                b.set_motion(bs2);
             }
         }
     }

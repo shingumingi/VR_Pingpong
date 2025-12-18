@@ -851,7 +851,7 @@ Transform:
   m_GameObject: {fileID: 51323573}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: -0.033, y: 1.2375098, z: 1.2569853}
+  m_LocalPosition: {x: -0.033, y: 1.0815098, z: 1.2569853}
   m_LocalScale: {x: 0.30741155, y: 0.11010218, z: 0.32130718}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4600,7 +4600,7 @@ Transform:
   m_GameObject: {fileID: 346088736}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.066, z: 0}
+  m_LocalPosition: {x: 0, y: -0.497, z: 0}
   m_LocalScale: {x: 1, y: 1.4645, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5888,6 +5888,8 @@ MonoBehaviour:
   - {fileID: 734073212}
   - {fileID: 949673989}
   - {fileID: 186954007}
+  maxSubstep: 0.0055555557
+  maxSubsteps: 8
 --- !u!1 &433335889
 GameObject:
   m_ObjectHideFlags: 0
@@ -9315,7 +9317,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -959.9895, y: -538.8621}
+  m_AnchoredPosition: {x: -959.9895, y: -539.016}
   m_SizeDelta: {x: 250, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &591159028
@@ -11524,12 +11526,12 @@ MonoBehaviour:
   marker_range: 3
   velocity_arrow: {fileID: 1216792789}
   normal_arrow: {fileID: 2100834651}
-  perpendicular_rebound: 0.7
-  parallel_rebound: 2
-  friction: 3
+  perpendicular_rebound: 0.1
+  parallel_rebound: 0.1
+  friction: 0.3
   gravity: {x: 0, y: -9.8, z: 0}
   z_top: 1
-  z_bottom: 0
+  z_bottom: 1
   y_top: 0
   y_bottom: 0
   x_top: 0
@@ -11539,7 +11541,7 @@ MonoBehaviour:
   ball_strike_velocity: {x: 0, y: 0, z: 0}
   wall_strike_velocity: {x: 0, y: 0, z: 0}
   replay: {fileID: 1005869010}
-  extra_size: 1
+  extra_size: 0.1
 --- !u!33 &757649408
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -12621,7 +12623,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -960.49457, y: -538.8528}
+  m_AnchoredPosition: {x: -960.49457, y: -539.00665}
   m_SizeDelta: {x: 190, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &869467293
@@ -18326,7 +18328,7 @@ Transform:
   m_GameObject: {fileID: 1255320395}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.407, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19685,7 +19687,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -960.6614, y: -538.8528}
+  m_AnchoredPosition: {x: -960.6614, y: -539.00665}
   m_SizeDelta: {x: 190, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1360946261
@@ -26553,11 +26555,11 @@ MonoBehaviour:
   marker_range: 3
   velocity_arrow: {fileID: 1216792789}
   normal_arrow: {fileID: 2100834651}
-  perpendicular_rebound: 0.7
-  parallel_rebound: 2
-  friction: 3
+  perpendicular_rebound: 0.1
+  parallel_rebound: 0.1
+  friction: 0.3
   gravity: {x: 0, y: -9.8, z: 0}
-  z_top: 0
+  z_top: 1
   z_bottom: 1
   y_top: 0
   y_bottom: 0
@@ -26568,7 +26570,7 @@ MonoBehaviour:
   ball_strike_velocity: {x: 0, y: 0, z: 0}
   wall_strike_velocity: {x: 0, y: 0, z: 0}
   replay: {fileID: 1005869010}
-  extra_size: 1
+  extra_size: 0.1
 --- !u!33 &1761045928
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -28094,7 +28096,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -960.3239, y: -538.8528}
+  m_AnchoredPosition: {x: -960.3239, y: -539.00665}
   m_SizeDelta: {x: 190, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1879858443
@@ -30629,7 +30631,7 @@ Transform:
   m_GameObject: {fileID: 2064177792}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.95646095, z: 0.2918603, w: 0}
-  m_LocalPosition: {x: -0.033, y: 1.46, z: 1.252}
+  m_LocalPosition: {x: -0.033, y: 1.304, z: 1.252}
   m_LocalScale: {x: 0.13300745, y: 0.19478941, z: 0.21614781}
   m_ConstrainProportionsScale: 0
   m_Children:

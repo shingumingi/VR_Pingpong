@@ -19,9 +19,9 @@ public class Hand : MonoBehaviour {
     public bool freeze_paddle = false;  // Used for instant replay.
     float max_hand_accel = 0f;  // max acceleration, for debugging
 
-    Vector3 _lastWorldPos;
-    Quaternion _lastWorldRot;
-    bool _hasLastPose = false;
+    Vector3 _lastPaddlePos;
+    Quaternion _lastPaddleRot;
+    bool _hasLastPaddlePose = false;
 
     void Start () {
     }
@@ -82,24 +82,26 @@ public class Hand : MonoBehaviour {
         Vector3 worldPos = hp + hr * offset;
         Quaternion worldRot = hr * rotOffset;
 
-        float dt = Time.unscaledDeltaTime; // 손 트래킹은 “현실 시간” 기준이 자연스러움
-
+        float dt = Time.unscaledDeltaTime;
         Vector3 vel = Vector3.zero;
         Vector3 angVel = Vector3.zero;
 
-        if (_hasLastPose && dt > 0f)
+        if (_hasLastPaddlePose && dt > 0f)
         {
-            vel = (worldPos - _lastWorldPos) / dt;
+            vel = (worldPos - _lastPaddlePos) / dt;
 
-            Quaternion dq = worldRot * Quaternion.Inverse(_lastWorldRot);
+            Quaternion dq = worldRot * Quaternion.Inverse(_lastPaddleRot);
             dq.ToAngleAxis(out float angleDeg, out Vector3 axis);
             if (angleDeg > 180f) angleDeg -= 360f;
-            float angleRad = angleDeg * Mathf.Deg2Rad;
-            angVel = axis.normalized * (angleRad / dt);
+
+            angVel = (axis.sqrMagnitude > 0f)
+                ? axis.normalized * (Mathf.Deg2Rad * angleDeg / dt)
+                : Vector3.zero;
         }
-        _hasLastPose = true;
-        _lastWorldPos = worldPos;
-        _lastWorldRot = worldRot;
+
+        _hasLastPaddlePose = true;
+        _lastPaddlePos = worldPos;
+        _lastPaddleRot = worldRot;
 
         held_paddle.move(worldPos, worldRot, vel, angVel);
     }
