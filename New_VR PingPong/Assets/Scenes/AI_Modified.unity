@@ -11363,8 +11363,8 @@ MonoBehaviour:
   marker_range: 3
   velocity_arrow: {fileID: 1216792789}
   normal_arrow: {fileID: 2100834651}
-  perpendicular_rebound: 0.7
-  parallel_rebound: 0.7
+  perpendicular_rebound: 4
+  parallel_rebound: 2
   friction: 3
   gravity: {x: 0, y: -9.8, z: 0}
   z_top: 1
@@ -26297,8 +26297,8 @@ MonoBehaviour:
   marker_range: 3
   velocity_arrow: {fileID: 1216792789}
   normal_arrow: {fileID: 2100834651}
-  perpendicular_rebound: 0.7
-  parallel_rebound: 0.7
+  perpendicular_rebound: 4
+  parallel_rebound: 2
   friction: 3
   gravity: {x: 0, y: -9.8, z: 0}
   z_top: 0
