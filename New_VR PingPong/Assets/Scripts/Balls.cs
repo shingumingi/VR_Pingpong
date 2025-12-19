@@ -70,8 +70,12 @@ public class Balls : MonoBehaviour
     {
         if (delta_t <= 0f) return;
 
-        int steps = Mathf.CeilToInt(delta_t / maxSubstep);
-        steps = Mathf.Clamp(steps, 1, maxSubsteps);
+        float slowFactor = Mathf.Clamp(1f / Mathf.Max(Time.timeScale, 0.05f), 1f, 4f);
+
+        float targetMaxSubstep = maxSubstep / slowFactor;
+
+        int steps = Mathf.CeilToInt(delta_t / targetMaxSubstep);
+        steps = Mathf.Clamp(steps, 1, Mathf.RoundToInt(maxSubsteps * slowFactor));
         float h = delta_t / steps;
 
         for (int s = 0; s < steps; s++)
@@ -82,7 +86,6 @@ public class Balls : MonoBehaviour
 
                 BallState bs1 = b.motion;
                 BallState bs2 = b.move_ball(h);
-
                 if (bs2 == null) continue;
 
                 bs2 = compute_rebounds(bs1, bs2, b);

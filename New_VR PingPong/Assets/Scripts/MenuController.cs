@@ -8,30 +8,16 @@ public class MenuController : MonoBehaviour
     public void PlayFeederMode() => SceneManager.LoadScene("Feeder_Modified");
     public void BackLobby() => SceneManager.LoadScene("Main");
     public void Quit() => Application.Quit();
-    float baseFixedDelta;
 
-    void Awake()
+    void SetTime(float s)
     {
-        baseFixedDelta = Time.fixedDeltaTime;
+        Time.timeScale = s;
+        Time.fixedDeltaTime = 0.02f * s;
     }
 
-    public void SetSlow()
-    {
-        Time.timeScale = 0.5f;
-        Time.fixedDeltaTime = baseFixedDelta * Time.timeScale;
-    }
-
-    public void SetNormal()
-    {
-        Time.timeScale = 1.0f;
-        Time.fixedDeltaTime = baseFixedDelta;
-    }
-
-    public void SetFast()
-    {
-        Time.timeScale = 1.2f;
-        Time.fixedDeltaTime = baseFixedDelta * Time.timeScale;
-    }
+    public void SetSlow() => SetTime(0.5f);
+    public void SetNormal() => SetTime(0.8f);
+    public void SetHard() => SetTime(1.1f);
     public void SetEasyDifficulty() => DifficultySettings.Current = DifficultyLevel.Easy;
     public void SetNormalDifficulty() => DifficultySettings.Current = DifficultyLevel.Normal;
     public void SetHardDifficulty() => DifficultySettings.Current = DifficultyLevel.Hard;

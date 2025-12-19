@@ -52,16 +52,11 @@ public class Hand : MonoBehaviour {
 
     void align_paddle_to_hand()
     {
-        if (controllerTransform == null || held_paddle == null)
-        {
-            return; 
-        }
+        if (controllerTransform == null || held_paddle == null) return;
 
-        // 1. XR 컨트롤러의 월드 위치/회전
         Vector3 hp = controllerTransform.position;
         Quaternion hr = controllerTransform.rotation;
 
-        // 2. 기본 오프셋 (Grip 없으면 그냥 컨트롤러 위치에 붙이기)
         Vector3 offset = Vector3.zero;
         Quaternion rotOffset = Quaternion.identity;
 
@@ -70,7 +65,6 @@ public class Hand : MonoBehaviour {
             offset = grip.paddle_grip_position;
             rotOffset = grip.paddle_grip_rotation;
 
-            // 왼손이면 x축 반전
             if (wand != null && wand.left)
             {
                 offset = new Vector3(-offset.x, offset.y, offset.z);
@@ -78,11 +72,11 @@ public class Hand : MonoBehaviour {
             }
         }
 
-        // 3. 컨트롤러 포즈 + 그립 오프셋을 월드 좌표로 변환
         Vector3 worldPos = hp + hr * offset;
         Quaternion worldRot = hr * rotOffset;
 
         float dt = Time.unscaledDeltaTime;
+
         Vector3 vel = Vector3.zero;
         Vector3 angVel = Vector3.zero;
 

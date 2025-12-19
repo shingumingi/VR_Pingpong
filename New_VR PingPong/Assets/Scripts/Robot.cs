@@ -91,10 +91,10 @@ public class Robot : MonoBehaviour
         choose_shot(bt, num_hit, out incoming_ball, out table_target,
             out speed, out topspin, out sidespin);
 
-
-        // Force robot to hit with NO spin.
+        // FORCE NO-SPIN for robot hits (ignore difficulty spin/shot presets)
         topspin = 0f;
         sidespin = 0f;
+
         // Compute velocity and spin of outgoing ball needed
         // to strike the target table position.
         Vector3 bv, bav;
@@ -132,11 +132,20 @@ public class Robot : MonoBehaviour
         float range = plane_move.magnitude;
         float vhorz = speed;
         Ball b = incoming_ball.ball;
-        float vy = b.vertical_speed_for_range(vhorz, 0f, -line.y, range);
+        float vy = b.vertical_speed_for_range(vhorz, topspin, -line.y, range);
         bv = vhorz * plane_move.normalized + vy * Vector3.up;
 
-        // Robot should not apply spin.
-        bav = Vector3.zero;
+        // Set desired outgoing spin.
+        Vector3 topspin_axis = Vector3.Cross(bv, Vector3.up).normalized;
+        Vector3 spin = -topspin * topspin_axis + sidespin * Vector3.up;
+        bav = spin / b.radius;
+
+        // Adjust ball velocity to compensate for sideways ball drift
+        // due to Magnus force from side spin.
+        float ks = 1f / 1500f;
+        float a = -ks * range * bav.y / bv.magnitude;
+        float adeg = a * 180f / Mathf.PI;
+        bv = Quaternion.AngleAxis(adeg, Vector3.up) * bv;
     }
 
     void choose_shot(BallTrack bt, int num_hit,
@@ -457,7 +466,7 @@ public class Robot : MonoBehaviour
         // Distance for fixed elevation angle with no drag of spin, d ~ v*v/g.
         // So use v ~ sqrt(d).
         float s = speed_level();
-        float speed = (3f + s) * Mathf.Sqrt(distance);
+        float speed = (3f + s + 0.1f * topspin) * Mathf.Sqrt(distance);
         return speed;
     }
 
@@ -692,8 +701,6 @@ public class Robot : MonoBehaviour
         Ball ball = play.ball_in_play;
         ball.freeze = false;
         Serve s = current_serve();
-        // Force robot serve to have NO spin.
-        if (s != null) s.ball_angular_velocity = Vector3.zero;
         Stroke stroke = s.serve_ball(ball, play.ball_tracking, paddle);
         set_stroke(stroke, ball.motion.time);
     }

@@ -11526,12 +11526,12 @@ MonoBehaviour:
   marker_range: 3
   velocity_arrow: {fileID: 1216792789}
   normal_arrow: {fileID: 2100834651}
-  perpendicular_rebound: 0.1
-  parallel_rebound: 0.1
-  friction: 0.3
+  perpendicular_rebound: 3
+  parallel_rebound: 1
+  friction: 0.5
   gravity: {x: 0, y: -9.8, z: 0}
   z_top: 1
-  z_bottom: 1
+  z_bottom: 0
   y_top: 0
   y_bottom: 0
   x_top: 0
@@ -23926,6 +23926,7 @@ MonoBehaviour:
   play: {fileID: 1005869013}
   serves: {fileID: 1005869015}
   auto_serve: 1
+  strokeSpeedScale: 1
   swing_duration: 0.4
   forehand_coverage: 0.75
   recovery_time: 0.5
@@ -25777,10 +25778,8 @@ MonoBehaviour:
   launchInterval: 2
   minLaunchSpeed: 3
   maxLaunchSpeed: 6
-  maxYawAngle: 5
+  maxYawAngle: 15
   maxPitchAngle: 3
-  maxTopBackSpin: 80
-  maxSideSpin: 60
 --- !u!23 &1740233846
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -26555,11 +26554,11 @@ MonoBehaviour:
   marker_range: 3
   velocity_arrow: {fileID: 1216792789}
   normal_arrow: {fileID: 2100834651}
-  perpendicular_rebound: 0.1
-  parallel_rebound: 0.1
-  friction: 0.3
+  perpendicular_rebound: 3
+  parallel_rebound: 1
+  friction: 0.5
   gravity: {x: 0, y: -9.8, z: 0}
-  z_top: 1
+  z_top: 0
   z_bottom: 1
   y_top: 0
   y_bottom: 0
@@ -28145,7 +28144,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1053485784}
         m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
-        m_MethodName: SetFast
+        m_MethodName: SetHard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
