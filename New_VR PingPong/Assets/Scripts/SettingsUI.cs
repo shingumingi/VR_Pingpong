@@ -287,7 +287,6 @@ public class SettingsUI : MonoBehaviour
     void set_rally_spin(string spin)
     {
         Robot r = play.robot;
-        r.spin = Array.IndexOf(r.spins, spin);
     }
 
     void set_rally_pattern(string pattern)
